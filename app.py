@@ -1,7 +1,12 @@
 import streamlit as st
+import os
+from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from langchain_ollama import ChatOllama
+from langchain_google_genai import ChatGoogleGenerativeAI
+
+# Load local .env if running locally
+load_dotenv()
 
 # Page Configuration
 st.set_page_config(
@@ -11,7 +16,7 @@ st.set_page_config(
 )
 
 st.title("🧭 Interactive Career Counseling & Psychometric Assessment Assistant")
-st.markdown("Discover personalized career paths, skill-building roadmaps, and psychometric insights powered locally by **Llama 3.2**.")
+st.markdown("Discover personalized career paths, skill-building roadmaps, and psychometric insights powered by **Google Gemini**.")
 
 # Initialize Session State for Multi-Step Form
 if "step" not in st.session_state:
@@ -100,12 +105,13 @@ elif st.session_state.step == 4:
     
     profile = st.session_state.profile
     
-    with st.spinner("Analyzing profile and synthesizing career roadmap with Llama 3.2..."):
+    with st.spinner("Analyzing profile and synthesizing career roadmap with Google Gemini..."):
         try:
-            llm = ChatOllama(model="llama3.2", temperature=0.3)
+            # Initialize Gemini Model via LangChain
+            llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.3)
             
             prompt = ChatPromptTemplate.from_messages([
-                ("system", "You are an expert Career Counselor, Psychologist, and Professional Mentor. Provide an empathetic, highly structured, and actionable guidance report based on the candidate's profile. /no_think"),
+                ("system", "You are an expert Career Counselor, Psychologist, and Professional Mentor. Provide an empathetic, highly structured, and actionable guidance report based on the candidate's profile."),
                 ("human", """
 Analyze the following candidate profile and generate a comprehensive career counseling report:
 
@@ -148,7 +154,6 @@ Your report must include:
             st.markdown("---")
             st.markdown(report)
             
-            # Download report button
             st.download_button(
                 label="Download Guidance Report as Markdown",
                 data=report,
@@ -162,7 +167,7 @@ Your report must include:
                 st.rerun()
                 
         except Exception as e:
-                st.error(f"Error connecting to Ollama: {e}. Make sure Ollama is running (`ollama serve`).")
+                st.error(f"Error connecting to Gemini API: {e}. Please ensure your GOOGLE_API_KEY is correctly set.")
                 if st.button("⬅️ Back to Form"):
                     st.session_state.step = 3
                     st.rerun()
