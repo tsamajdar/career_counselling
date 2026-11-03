@@ -108,7 +108,7 @@ elif st.session_state.step == 4:
     with st.spinner("Analyzing profile and synthesizing career roadmap with Google Gemini..."):
         try:
             # Initialize Gemini Model via LangChain
-            llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.3)
+            llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.3)
             
             prompt = ChatPromptTemplate.from_messages([
                 ("system", "You are an expert Career Counselor, Psychologist, and Professional Mentor. Provide an empathetic, highly structured, and actionable guidance report based on the candidate's profile."),
